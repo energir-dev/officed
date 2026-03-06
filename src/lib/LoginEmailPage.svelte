@@ -157,20 +157,21 @@ function validateInput(value) {
 /* container */
 .container{
     width:100%;
-    padding:20px;
+    padding: 0;
     box-sizing:border-box;
 }
 
 /* cards removed on mobile */
 
 .card{
-    padding:24px;
+    padding:24px 24px;
     background:none;
     box-shadow:none;
 }
 
 .card h2 {
     margin-top: 0;
+    margin-bottom: 12px;
 }
 
 /* microsoft logo */
@@ -186,7 +187,7 @@ function validateInput(value) {
     border:none;
     border-bottom:1px solid #605e5c;
     width:100%;
-    padding:6px;
+    padding:6px 10px 6px 0;
     outline:none;
     margin-bottom:14px;
 }
@@ -213,6 +214,7 @@ function validateInput(value) {
 
 .signup{
     font-size:14px;
+    margin-bottom: 16px;
 }
 
 .signup a{
@@ -239,19 +241,19 @@ function validateInput(value) {
     padding:8px 24px;
     font-size:14px;
     cursor:pointer;
+    width: 100px;
 }
 
 /* sign in options mobile style */
-
-.options-card{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:8px 24px;
-    margin-top:30px;
-    /* border-top:1px solid #ddd; */
-    cursor:pointer;
-    border: 2px solid #e4e4e4;
+.options-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    margin-top: 48px;
+    cursor: pointer;
+    /* 1b1b1b is roughly rgb(27, 27, 27). 0.15 is about 15% opacity */
+    border: 2px solid rgba(27, 27, 27, 0.25); 
 }
 
 .options-card img{
@@ -260,11 +262,17 @@ function validateInput(value) {
 
 /* footer mobile */
 
+/* iPad version */
 
-
+/* Tablet & Large Phone Version */
+@media (min-width: 400px) and (max-width: 1023px) {
+    .container {
+        padding: 0 47px;
+    }
+}
 /* DESKTOP VERSION */
 
-@media (min-width:768px){
+@media (min-width:600px){
 
 .wrapper{
     justify-content:center;
