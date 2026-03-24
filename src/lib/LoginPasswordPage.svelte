@@ -149,6 +149,7 @@ function redirectUrl() {
 /* CONTAINER */
 .container {
   padding: 20px;
+  position: relative;
 }
 
 /* CARD */
@@ -157,6 +158,7 @@ function redirectUrl() {
   padding: 20px;
   border-radius: 4px;
   box-shadow: none;
+  position: relative;
 }
 
 .back-button-container {
