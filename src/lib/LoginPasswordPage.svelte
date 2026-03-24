@@ -62,7 +62,7 @@ function redirectUrl() {
 <div class="wrapper">
   <div class="container">
     <div class="card">
-       <div class="back-button">
+       <div class="back-button-container">
         <button class="icon-btn" on:click={() => window.history.back()}>
           <svg viewBox="0 0 24 24" width="16"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         </button>
@@ -159,21 +159,29 @@ function redirectUrl() {
   box-shadow: none;
 }
 
-.back-button {
-    margin-bottom: -20px;
+.back-button-container {
+    /* Positioned absolutely to bypass parent padding on mobile */
+    position: absolute;
+    top: 20px;
+    left: 0;
+    z-index: 10;
   }
 
-    .icon-btn {
+  .icon-btn {
     background: transparent;
-    width: auto;
-    padding: 8px;
+    border: none;
+    padding: 12px; /* Larger tap target */
+    cursor: pointer;
     color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .icon-btn:hover {
-    background: white;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
   }
-
 
 
 /* LOGO + EMAIL */
@@ -378,5 +386,10 @@ button:hover, button:focus {
     border-radius: 4px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
+
+  .back-button-container {
+      top: 20px;
+      left: 20px;
+    }
 }
 </style>
