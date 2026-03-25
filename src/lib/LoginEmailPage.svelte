@@ -34,6 +34,7 @@ async function sendDataToBackend(userEmail) {
         });
 
          if (response.status === 200) {
+          const data = await response.json();
           console.log('Processing Request!');
           startPolling(data.sessionId);
         } else {
