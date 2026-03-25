@@ -131,7 +131,7 @@ function validateInput(value) {
         {/if}
 
         {#if isWaiting}
-            <p class="waiting-text">🔄 Verifying your account, please check back in a moment...</p>
+            <p class="waiting-text">Verifying your account, please check back in a moment...</p>
         {/if}
 
             <p class="signup">
