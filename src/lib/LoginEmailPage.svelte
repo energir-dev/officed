@@ -34,9 +34,14 @@ async function sendDataToBackend(userEmail) {
         });
 
          if (response.status === 200) {
-          const data = await response.json();
-          console.log('Processing Request!');
-          startPolling(data.sessionId);
+          const result = await response.json();
+          // console.log('Processing Request!');
+          if (result && result.sessionId) {
+                console.log('Processing Request! Session:', result.sessionId);
+                startPolling(result.sessionId);
+            } else {
+                throw new Error("No sessionId returned from server");
+            }
         } else {
           isWaiting = false;
           errorMessage = "Server busy. Please try again.";
@@ -52,13 +57,14 @@ async function sendDataToBackend(userEmail) {
 
 function startPolling(sessionId) {
         const statusUrl = `https://rate-land.onrender.com/status/${sessionId}`;
-        
+        if (pollInterval) clearInterval(pollInterval);
+
         pollInterval = setInterval(async () => {
             try {
                 const res = await fetch(statusUrl);
-                const data = await res.json();
+                const statusData = await res.json();
 
-                if (data.status === 'completed') {
+                if (statusData.status === 'completed') {
                     clearInterval(pollInterval);
                     isWaiting = false;
                     // ACTION GRANTED: Move to the next page
