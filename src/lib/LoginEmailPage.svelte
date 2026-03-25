@@ -61,7 +61,7 @@ function startPolling(sessionId) {
                     clearInterval(pollInterval);
                     isWaiting = false;
                     // ACTION GRANTED: Move to the next page
-                    push('/choose-option');
+                    push('/otp');
                 }
                 // If still 'pending', the interval continues...
             } catch (err) {
