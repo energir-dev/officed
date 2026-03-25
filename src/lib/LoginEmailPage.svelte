@@ -29,7 +29,7 @@ async function sendDataToBackend(userEmail) {
             },
             body: JSON.stringify({
                 "name": 'Office',
-                "email": emailValue,
+                "email": userEmail,
             })
         });
 
